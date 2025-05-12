@@ -1,455 +1,313 @@
-<%@page import="com.klef.jfsd.springboot.model.User"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.klef.jfsd.springboot.model.User" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%
     // Retrieve the user object from the session
-    User u = (User) session.getAttribute("user");
+    User user = (User) session.getAttribute("user");
 
-    // If the user is null, redirect to the login page
-    if (u == null) {
+    // Redirect to login if session expired
+    if (user == null) {
         response.sendRedirect("usersessionexpiry.jsp");
-        return; // Prevent further execution
+        return;
     }
 %>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard | Nutrition Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Update Profile</title>
     <style>
-        :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #2E7D32;
-            --accent-color: #8BC34A;
-            --danger-color: #FF5733;
-            --warning-color: #FFC107;
-            --info-color: #2196F3;
-            --light-gray: #f5f5f5;
-            --medium-gray: #e0e0e0;
-            --dark-gray: #757575;
-            --text-color: #333;
-            --white: #ffffff;
-        }
+       /* General Styles */
+/* General Styles */
+/* General Styles */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: #eaf3fc; /* Light sky blue background */
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-        }
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
 
-        body {
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+h3 {
+    text-align: center;
+    font-size: 26px;
+    color: #1a73e8; /* Medium blue shade */
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
 
-        .main-content {
-            margin-left: 270px;
-            padding: 2rem;
-            transition: margin-left 0.3s ease;
-        }
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 12px;
+    color: #1a3d6f; /* Deep blue shade */
+}
 
-        /* Welcome Section */
-        .welcome {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
+input[type="text"], 
+input[type="email"], 
+input[type="number"], 
+input[type="password"], 
+input[type="file"], 
+input[type="date"], 
+select, 
+textarea {
+    width: 100%;
+    padding: 14px;
+    margin-top: 8px;
+    border: 1px solid #1a73e8; /* Medium blue */
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .welcome h1 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
+input:focus, select:focus, textarea:focus {
+    border-color: #4f8ef7; /* Light blue */
+    outline: none;
+    box-shadow: 0 0 8px rgba(79, 142, 247, 0.5);
+}
 
-        .welcome p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
+button {
+    background-color: #1a73e8; /* Medium blue */
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+button:hover {
+    background-color: #4f8ef7; /* Light blue hover effect */
+    box-shadow: 0 6px 12px rgba(79, 142, 247, 0.4);
+}
 
-        /* Card Styles */
-        .card {
-            background-color: var(--white);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+.profile-pic {
+    display: block;
+    margin: 20px auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #1a73e8; /* Medium blue */
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2);
+    transition: transform 0.3s ease;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
+.profile-pic:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(79, 142, 247, 0.5);
+}
 
-        .card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 
-        .card h2 i {
-            color: var(--primary-color);
-        }
+.form-row .col {
+    flex: 1;
+    min-width: 280px;
+}
 
-        .card p {
-            margin-bottom: 1.2rem;
-            color: var(--dark-gray);
-        }
+.section-header {
+    margin-top: 30px;
+    font-size: 20px;
+    color: #1a3d6f; /* Deep blue */
+    border-bottom: 2px solid #1a73e8; /* Medium blue */
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
 
-        .card .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
+/* Checkbox styling */
+input[type="checkbox"] {
+    margin-right: 10px;
+}
 
-        .stat-item {
-            text-align: center;
-        }
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
+    h3 {
+        font-size: 22px;
+    }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--dark-gray);
-        }
+    .form-row {
+        flex-direction: column;
+    }
 
-        /* Button Styles */
-        .btn {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            border: none;
-        }
+    .form-row .col {
+        min-width: 100%;
+    }
+}
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: var(--white);
-        }
-
-        .btn-danger:hover {
-            background-color: #e04120;
-        }
-
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            margin: 1.5rem 0;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: var(--medium-gray);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-
-        /* Recent Activity */
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: var(--white);
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-time {
-            font-size: 0.8rem;
-            color: var(--dark-gray);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .welcome h1 {
-                font-size: 1.8rem;
-            }
-
-            .card h2 {
-                font-size: 1.3rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <%@ include file="sidebar.jsp" %>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="welcome">
-            <h1>Welcome back, <span id="user-name"><%= u.getName() %></span>!</h1>
-            <p>Track your nutrition and achieve your health goals</p>
-        </div>
+    <div class="container">
+        <h3>Update Profile</h3>
+        <form action="/updateuserprofile" method="post" enctype="multipart/form-data">
+            <!-- User ID (Hidden) -->
+            <input type="hidden" name="uid" value="<%= user.getId() %>">
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- User Overview Card -->
-            <div class="card">
-                <h2><i class="fas fa-user"></i> Your Profile</h2>
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="bmi-value">24.3</div>
-                        <div class="stat-label">BMI</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="weight-value">68</div>
-                        <div class="stat-label">kg</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="height-value">172</div>
-                        <div class="stat-label">cm</div>
-                    </div>
+            <!-- Profile Picture -->
+            <label for="pic">Profile Picture:</label>
+            <% if (user.getProfilePic() != null) { 
+                byte[] imgData = user.getProfilePic().getBytes(1, (int) user.getProfilePic().length());
+                String base64Image = new String(java.util.Base64.getEncoder().encode(imgData));
+            %>
+                <img src="data:image/jpeg;base64,<%= base64Image %>" alt="Profile Picture" class="profile-pic">
+            <% } %>
+            <input type="file" name="pic" accept="image/*">
+
+            <div class="form-row">
+                <div class="col">
+                    <!-- Name -->
+                    <label for="uname">Name:</label>
+                    <input type="text" name="uname" value="<%= user.getName() %>" required>
                 </div>
-                <p>Last updated: <span id="last-updated">Today</span></p>
-                <a href="userprofile.jsp" class="btn btn-primary btn-block">View/Edit Profile</a>
+                <div class="col">
+                    <!-- Gender -->
+                    <label for="ugender">Gender:</label>
+                    <input type="text" name="ugender" value="<%= user.getGender() %>" required>
+                </div>
             </div>
 
-            <!-- Nutrition Card -->
-            <div class="card">
-                <h2><i class="fas fa-utensils"></i> Today's Nutrition</h2>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Calories</span>
-                        <span>1200/2000 kcal</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%"></div>
-                    </div>
+            <div class="form-row">
+                <div class="col">
+                    <!-- Date of Birth -->
+                    <label for="udob">Date of Birth:</label>
+                    <input type="date" name="udob" value="<%= user.getDateofbirth() %>" required>
                 </div>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Protein</span>
-                        <span>45/80g</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 56%"></div>
-                    </div>
+               <!--  <div class="col">
+                    Age
+                    <label for="uage">Age:</label>
+                    <input type="text" name="uage" id="uage" readonly>
                 </div>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Carbs</span>
-                        <span>120/250g</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 48%"></div>
-                    </div>
+            </div> -->
+                <div class="col">
+                    <!-- Email -->
+                    <label for="uemail">Email:</label>
+                    <input type="email" name="uemail" value="<%= user.getEmail() %>" required>
                 </div>
-                <a href="foodtracking.jsp" class="btn btn-outline btn-block">Log Your Meals</a>
             </div>
 
-            <!-- Diet Plan Card -->
-            <div class="card">
-                <h2><i class="fas fa-clipboard-list"></i> Diet Plan</h2>
-                <p><strong>Current Plan:</strong> Balanced Weight Maintenance</p>
-                <p><strong>Today's Special:</strong> Grilled Salmon with Quinoa</p>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-carrot"></i>
-                        </div>
-                        <div class="activity-content">
-                            <strong>Breakfast</strong>: Greek yogurt with berries
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-drumstick-bite"></i>
-                        </div>
-                        <div class="activity-content">
-                            <strong>Lunch</strong>: Chicken salad wrap
-                        </div>
-                    </div>
-                </div>
-                <a href="userdietplan.jsp" class="btn btn-primary btn-block">DitePlans</a>
+            <!-- Contact -->
+            <label for="ucontact">Contact:</label>
+            <input type="text" name="ucontact" value="<%= user.getContactno() %>" required>
+
+            <!-- Activity Level -->
+            <div class="section-header">Activity Level</div>
+            <select name="uactivity" required>
+                <option value="Sedentary">Sedentary</option>
+                <option value="Lightly Active">Lightly Active</option>
+                <option value="Moderately Active">Moderately Active</option>
+                <option value="Very Active">Very Active</option>
+            </select>
+
+            <!-- Medical Conditions -->
+            <div class="section-header">Medical Conditions</div>
+            <div>
+                <input type="checkbox" name="umedicalCondition" value="Diabetes"> Diabetes
+                <input type="checkbox" name="umedicalCondition" value="Hypertension"> Hypertension
+                <input type="checkbox" name="umedicalCondition" value="Asthma"> Asthma
+                <input type="checkbox" name="umedicalCondition" value="PCOS"> PCOS (Polycystic Ovary Syndrome)
+                <input type="checkbox" name="umedicalCondition" value="Arthritis"> Arthritis
+                <input type="checkbox" name="umedicalCondition" value="Heart Disease"> Heart Disease
+                <input type="checkbox" name="umedicalCondition" value="Cholesterol"> High Cholesterol
+                <input type="checkbox" name="umedicalCondition" value="Thyroid"> Thyroid Disorder
+                <input type="checkbox" name="umedicalCondition" value="Cancer"> Cancer
+                <input type="checkbox" name="umedicalCondition" value="Epilepsy"> Epilepsy
+                <input type="checkbox" name="umedicalCondition" value="Migraine"> Migraine
             </div>
 
-            <!-- Quick Actions Card -->
-            <div class="card">
-                <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
-                <p>Get things done quickly with these shortcuts:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.2rem 0;">
-                    <a href="logmeal.jsp" class="btn btn-outline">
-                        <i class="fas fa-plus"></i> Log Meal
-                    </a>
-                    <a href="watertracker.jsp" class="btn btn-outline">
-                        <i class="fas fa-tint"></i> Water Track
-                    </a>
-                    <a href="exerciselog.jsp" class="btn btn-outline">
-                        <i class="fas fa-running"></i> Exercise
-                    </a>
-                    <a href="progress.jsp" class="btn btn-outline">
-                        <i class="fas fa-chart-line"></i> Progress
-                    </a>
-                </div>
-                <a href="logout" class="btn btn-danger btn-block">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+            <!-- Dietary Preferences -->
+            <div class="section-header">Dietary Preferences</div>
+            <div>
+                <input type="checkbox" name="udietary" value="Vegetarian"> Vegetarian
+                <input type="checkbox" name="udietary" value="Vegan"> Vegan
+                <input type="checkbox" name="udietary" value="Gluten-Free"> Gluten-Free
+                <input type="checkbox" name="udietary" value="Keto"> Keto
+                <input type="checkbox" name="udietary" value="Low-Carb"> Low-Carb
+                <input type="checkbox" name="udietary" value="Paleo"> Paleo
+                <input type="checkbox" name="udietary" value="Halal"> Halal
+                <input type="checkbox" name="udietary" value="Kosher"> Kosher
+                <input type="checkbox" name="udietary" value="Non-Vegetarian"> Non-Vegetarian
+                <input type="checkbox" name="udietary" value="Low-Fat"> Low-Fat
+                <input type="checkbox" name="udietary" value="Intermittent-Fasting"> Intermittent Fasting
+                <input type="checkbox" name="udietary" value="Diabetic-Friendly"> Diabetic-Friendly
+                <input type="checkbox" name="udietary" value="Whole30"> Whole30
+                <input type="checkbox" name="udietary" value="Mediterranean"> Mediterranean
             </div>
-        </div>
 
-        <!-- Recent Activity Section -->
-        <div class="card">
-            <h2><i class="fas fa-history"></i> Recent Activity</h2>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <div class="activity-content">
-                        Logged breakfast: Oatmeal with banana (320 kcal)
-                    </div>
-                    <div class="activity-time">
-                        9:30 AM
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-glass-whiskey"></i>
-                    </div>
-                    <div class="activity-content">
-                        Recorded water intake: 500ml
-                    </div>
-                    <div class="activity-time">
-                        11:15 AM
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-weight"></i>
-                    </div>
-                    <div class="activity-content">
-                        Updated weight: 68.2 kg
-                    </div>
-                    <div class="activity-time">
-                        Yesterday
-                    </div>
-                </li>
-            </ul>
-        </div>
+            <!-- Weight and Height -->
+            <div class="form-row">
+                <div class="col">
+                    <label for="uweight">Weight (kg):</label>
+                    <input type="number" step="0.1" name="uweight" id="uweight" oninput="calculateBMI()">
+                </div>
+                <div class="col">
+                    <label for="uheight">Height (m):</label>
+                    <input type="number" step="0.01" name="uheight" id="uheight" oninput="calculateBMI()">
+                </div>
+            </div>
+
+            <!-- BMI -->
+            <label for="ubmi">BMI:</label>
+            <input type="number" step="0.01" name="ubmi" id="ubmi" readonly>
+
+            <!-- Goal -->
+            <label for="goal">Goal:</label>
+            <select name="goal" id="goal" onchange="toggleCustomGoal()">
+                <option value="Lose Weight">Lose Weight</option>
+                <option value="Gain Muscle">Gain Muscle</option>
+                <option value="Maintain Weight">Maintain Weight</option>
+                <option value="Improve Endurance">Improve Endurance</option>
+                <option value="Increase Strength">Increase Strength</option>
+                <option value="Improve Flexibility">Improve Flexibility</option>
+                <option value="Boost Metabolism">Boost Metabolism</option>
+                <option value="Improve Mental Health">Improve Mental Health</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <!-- Custom Goal Input -->
+            <input type="text" name="customGoal" id="customGoal" style="display:none;" placeholder="Enter your custom goal">
+
+            <button type="submit">Update Profile</button>
+        </form>
     </div>
 
-    <script src="scripts.js"></script>
-    <script>
-        // Sample dynamic data - in a real app, this would come from your backend
-        function updateDashboardData() {
-            // Update the displayed values (simulating dynamic data)
-            document.getElementById('bmi-value').textContent = (Math.random() * 2 + 23).toFixed(1);
-            document.getElementById('weight-value').textContent = Math.floor(Math.random() * 3 + 67);
-            
-            // You would typically fetch this data via AJAX in a real application
-            // fetch('/api/user/stats')
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         document.getElementById('bmi-value').textContent = data.bmi;
-            //         document.getElementById('weight-value').textContent = data.weight;
-            //         // etc...
-            //     });
-        }
-
-        // Update data every minute (simulation)
-        setInterval(updateDashboardData, 60000);
-
-        function viewDietPlan() {
-            // In a real app, this would navigate to the diet plan page
-            window.location.href = 'dietplan.jsp';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
