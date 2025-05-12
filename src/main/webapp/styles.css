@@ -1,0 +1,145 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fb;
+    display: flex;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    height: 100%;
+    background-color: #3d4973;
+    color: white;
+    padding-top: 30px;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar-header h2 {
+    font-size: 24px;
+    color: #ffbd59;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar .nav-links {
+    list-style: none;
+}
+
+.sidebar .nav-links li {
+    padding: 20px;
+    text-align: center;
+}
+
+.sidebar .nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .nav-links li a:hover {
+    background-color: #5a6c8a;
+    border-radius: 8px;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    width: calc(100% - 250px);
+    transition: all 0.3s ease;
+}
+
+header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+}
+
+header p {
+    font-size: 20px;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+/* Section Styles */
+h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #444;
+    font-weight: 600;
+}
+
+button.btn {
+    background-color: #ffbd59;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button.btn:hover {
+    background-color: #e0a800;
+}
+
+button.btn:focus {
+    outline: none;
+}
+
+/* Quick Access Buttons */
+.quick-access button {
+    margin: 10px 10px 10px 0;
+}
+
+/* Content Boxes */
+.overview, .diet-plan-summary, .alerts, .goals-progress, .appointments, .recent-activities, .community-support, .feedback-survey {
+    background-color: white;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+i {
+    margin-right: 8px;
+}
+
+/* Hover Effect for Sections */
+.overview:hover, .diet-plan-summary:hover, .alerts:hover, .goals-progress:hover, .appointments:hover, .recent-activities:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar .nav-links li {
+        padding: 15px;
+    }
+}
