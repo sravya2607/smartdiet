@@ -1,253 +1,436 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="com.klef.jfsd.springboot.model.User"%>
+<%
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect("usersessionexpiry.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calories Calculator</title>
+    <title>Calorie Calculator | Nutrition Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        /* General styling */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+            --accent-color: #8BC34A;
+            --danger-color: #FF5733;
+            --warning-color: #FFC107;
+            --info-color: #2196F3;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #757575;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-       body {
-    font-family: Arial, sans-serif;
-    color: #333;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    background-image: url('https://tse1.mm.bing.net/th?id=OIP.m7WccSx6dPfFHyTBSCvPjQHaE8&pid=Api&P=0&h=180');
-    background-size: cover;
-    background-position: center;
-}
-       
-
-        /* Add a pseudo-element to blur the background */
-          body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: inherit;
-            background-size: inherit;
-            background-position: inherit;
-            filter: blur(8px); /* Blur effect */
-            z-index: -1; /* Position behind content */
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-      .container {
-   
-    background-size: cover; /* Ensures the image covers the container */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents tiling if image is smaller */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    padding: 40px;
-    position: relative;
-    z-index: 1;
-}
-      
-        
+        .main-content {
+            margin-left: 270px;
+            padding: 2rem;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
 
-        h1 {
-            font-size: 24px;
-            color: #58b27d;
-            margin-bottom: 20px;
+        .card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
             text-align: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h1 {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card h1 i {
+            color: var(--primary-color);
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .form-group label {
-            font-size: 16px;
-            color: #555555;
-            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-gray);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
         }
 
         .form-group input,
-        .form-group select,
-        .form-group button {
+        .form-group select {
             width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #dddddd;
-            border-radius: 5px;
-            box-sizing: border-box;
+            padding: 0.8rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--light-gray);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .form-group button {
-            background-color: #58b27d;
-            color: white;
-            border: none;
-            cursor: pointer;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
         }
 
-        .form-group button:hover {
-            background-color: #45a05a;
+        .unit-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .result-group {
-            margin-top: 20px;
+        .unit-selector label {
+            font-weight: 500;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
-        .result-group p {
-            font-size: 18px;
-            color: #555;
+        .unit-selector input[type="radio"] {
+            accent-color: var(--primary-color);
         }
 
-        .result-group .result-item {
-            font-size: 16px;
-            margin-top: 8px;
+        .height-inputs {
+            display: flex;
+            gap: 1rem;
         }
 
-        .result-item span {
-            font-weight: bold;
+        .height-inputs input {
+            flex: 1;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
         }
 
         .button-container {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        .button-container button {
-            width: 48%;
-            padding: 15px;
-            font-size: 16px;
-            color: black;
-            border: none;
-            border-radius: 5px;
+        .btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
         }
 
-        .button-container .calculate-btn {
-            background-color: #58b27d;
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
         }
 
-        .button-container .calculate-btn:hover {
-            background-color: #45a05a;
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
         }
 
-        .button-container .back-btn {
-            background-color: #58b27d;
+        .btn-secondary {
+            background-color: var(--dark-gray);
+            color: var(--white);
         }
 
-        .button-container .back-btn:hover {
-            background-color: #45a05a;
+        .btn-secondary:hover {
+            background-color: var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        .result-group {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            display: none;
+        }
+
+        .result-group p {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .result-item {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .result-item span {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-group input,
+            .form-group select {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+
+            .result-group p {
+                font-size: 1rem;
+            }
+
+            .result-item {
+                font-size: 0.9rem;
+            }
+
+            .height-inputs {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <%@ include file="sidebar.jsp" %>
 
-    <div class="container">
-        <h1>Calorie Calculator</h1>
-        <form id="calorie-form">
-            <div class="form-group">
-                <label for="age">Age (in years):</label>
-                <input type="number" id="age" required>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="card">
+            <h1><i class="fas fa-fire"></i> Calorie Calculator</h1>
+            <div class="unit-selector">
+                <label for="metric"><input type="radio" id="metric" name="unit" checked> Metric</label>
+                <label for="imperial"><input type="radio" id="imperial" name="unit"> Imperial</label>
             </div>
+            <form id="calorie-form">
+                <div class="form-group">
+                    <label for="age">Age (in years):</label>
+                    <input type="number" id="age" min="1" value="<%= user.getAge() != null ? user.getAge() : '' %>" required>
+                    <div class="error-message" id="age-error">Please enter a valid age.</div>
+                </div>
 
-            <div class="form-group">
-                <label for="gender">Gender:</label>
-                <select id="gender" required>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" required>
+                        <option value="" disabled <%= user.getGender() == null ? "selected" : "" %>>Select Gender</option>
+                        <option value="male" <%= "Male".equals(user.getGender()) ? "selected" : "" %>>Male</option>
+                        <option value="female" <%= "Female".equals(user.getGender()) ? "selected" : "" %>>Female</option>
+                    </select>
+                    <div class="error-message" id="gender-error">Please select a gender.</div>
+                </div>
 
-            <div class="form-group">
-                <label for="height">Height (in cm):</label>
-                <input type="number" id="height" required>
-            </div>
+                <div class="form-group">
+                    <label for="height">Height:</label>
+                    <div class="height-inputs" id="height-inputs">
+                        <input type="number" id="height-cm" placeholder="Centimeters" min="1" step="0.1" value="<%= user.getHeight() != null ? user.getHeight() : '' %>" required>
+                    </div>
+                    <div class="error-message" id="height-error">Please enter a valid height.</div>
+                </div>
 
-            <div class="form-group">
-                <label for="weight">Weight (in kg):</label>
-                <input type="number" id="weight" required>
-            </div>
+                <div class="form-group">
+                    <label for="weight">Weight:</label>
+                    <input type="number" id="weight-kg" placeholder="Kilograms" min="1" step="0.1" value="<%= user.getWeight() != null ? user.getWeight() : '' %>" required>
+                    <div class="error-message" id="weight-error">Please enter a valid weight.</div>
+                </div>
 
-            <div class="form-group">
-                <label for="activity">Activity Level:</label>
-                <select id="activity" required>
-                    <option value="inactive">Inactive</option>
-                    <option value="somewhat_active">Somewhat Active</option>
-                    <option value="active">Active</option>
-                    <option value="very_active">Very Active</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="activity">Activity Level:</label>
+                    <select id="activity" required>
+                        <option value="" disabled <%= user.getActivity() == null ? "selected" : "" %>>Select Activity Level</option>
+                        <option value="inactive" <%= "Sedentary".equals(user.getActivity()) ? "selected" : "" %>>Inactive (little or no exercise)</option>
+                        <option value="somewhat_active" <%= "Lightly Active".equals(user.getActivity()) ? "selected" : "" %>>Somewhat Active (light exercise, 1-3 days/week)</option>
+                        <option value="active" <%= "Moderately Active".equals(user.getActivity()) ? "selected" : "" %>>Active (moderate exercise, 3-5 days/week)</option>
+                        <option value="very_active" <%= "Very Active".equals(user.getActivity()) ? "selected" : "" %>>Very Active (intense exercise, 6-7 days/week)</option>
+                    </select>
+                    <div class="error-message" id="activity-error">Please select an activity level.</div>
+                </div>
 
-            <div class="button-container">
-                <button type="submit" class="calculate-btn">Calculate</button>
-                <button type="button" class="back-btn" onclick="window.history.back()">Back</button>
-            </div>
-        </form>
+                <div class="button-container">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-calculator"></i> Calculate</button>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='userdashboard.jsp'">Back to Dashboard</button>
+                </div>
+            </form>
 
-        <div id="result" class="result-group" style="display: none;">
-            <p>Your estimated daily calorie needs are:</p>
-            <p id="calories-output"></p>
-            <div class="result-item">
-                <span>Inactive:</span> <span id="inactive-calories"></span> calories
-            </div>
-            <div class="result-item">
-                <span>Somewhat Active:</span> <span id="somewhat-active-calories"></span> calories
-            </div>
-            <div class="result-item">
-                <span>Active:</span> <span id="active-calories"></span> calories
-            </div>
-            <div class="result-item">
-                <span>Very Active:</span> <span id="very-active-calories"></span> calories
+            <div id="result" class="result-group">
+                <p>Your estimated daily calorie needs are:</p>
+                <p id="calories-output"></p>
+                <div class="result-item">
+                    <span>Inactive:</span> <span id="inactive-calories"></span> calories
+                </div>
+                <div class="result-item">
+                    <span>Somewhat Active:</span> <span id="somewhat-active-calories"></span> calories
+                </div>
+                <div class="result-item">
+                    <span>Active:</span> <span id="active-calories"></span> calories
+                </div>
+                <div class="result-item">
+                    <span>Very Active:</span> <span id="very-active-calories"></span> calories
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        const unitSelector = document.querySelectorAll('input[name="unit"]');
+        const heightInputs = document.getElementById('height-inputs');
+        const weightInput = document.getElementById('weight-kg');
+
+        function updateUnitInputs() {
+            const unit = document.querySelector('input[name="unit"]:checked').id;
+            if (unit === 'imperial') {
+                heightInputs.innerHTML = `
+                    <input type="number" id="height-feet" placeholder="Feet" min="0" required>
+                    <input type="number" id="height-inches" placeholder="Inches" min="0" step="0.1" required>
+                `;
+                weightInput.id = 'weight-lb';
+                weightInput.placeholder = 'Pounds';
+            } else {
+                heightInputs.innerHTML = `
+                    <input type="number" id="height-cm" placeholder="Centimeters" min="1" step="0.1" value="${document.getElementById('height-cm')?.value || ''}" required>
+                `;
+                weightInput.id = 'weight-kg';
+                weightInput.placeholder = 'Kilograms';
+            }
+        }
+
+        unitSelector.forEach(radio => {
+            radio.addEventListener('change', updateUnitInputs);
+        });
+
         document.getElementById('calorie-form').addEventListener('submit', function(event) {
             event.preventDefault();
 
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+
             const age = parseInt(document.getElementById('age').value);
             const gender = document.getElementById('gender').value;
-            const height = parseInt(document.getElementById('height').value);
-            const weight = parseInt(document.getElementById('weight').value);
+            const unit = document.querySelector('input[name="unit"]:checked').id;
+            let height, weight;
+
+            if (unit === 'imperial') {
+                const feet = parseFloat(document.getElementById('height-feet')?.value) || 0;
+                const inches = parseFloat(document.getElementById('height-inches')?.value) || 0;
+                height = (feet * 30.48) + (inches * 2.54); // Convert to cm
+                weight = parseFloat(document.getElementById('weight-lb')?.value) * 0.453592; // Convert to kg
+            } else {
+                height = parseFloat(document.getElementById('height-cm')?.value);
+                weight = parseFloat(document.getElementById('weight-kg')?.value);
+            }
             const activityLevel = document.getElementById('activity').value;
 
+            // Validation
+            let isValid = true;
+            if (isNaN(age) || age <= 0) {
+                document.getElementById('age-error').style.display = 'block';
+                isValid = false;
+            }
+            if (!gender) {
+                document.getElementById('gender-error').style.display = 'block';
+                isValid = false;
+            }
+            if (isNaN(height) || height <= 0) {
+                document.getElementById('height-error').style.display = 'block';
+                isValid = false;
+            }
+            if (isNaN(weight) || weight <= 0) {
+                document.getElementById('weight-error').style.display = 'block';
+                isValid = false;
+            }
+            if (!activityLevel) {
+                document.getElementById('activity-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Mifflin-St Jeor Equation
             let bmr;
-
             if (gender === 'male') {
-                bmr = 66.5 + (13.75 * weight) + (5.003 * height) - (6.75 * age);
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
             } else {
-                bmr = 655 + (9.563 * weight) + (1.850 * height) - (4.676 * age);
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
             }
 
-            let activityMultiplier;
+            const activityMultipliers = {
+                inactive: 1.2,
+                somewhat_active: 1.375,
+                active: 1.55,
+                very_active: 1.725
+            };
 
-            switch (activityLevel) {
-                case 'inactive':
-                    activityMultiplier = 1.2;
-                    break;
-                case 'somewhat_active':
-                    activityMultiplier = 1.375;
-                    break;
-                case 'active':
-                    activityMultiplier = 1.55;
-                    break;
-                case 'very_active':
-                    activityMultiplier = 1.725;
-                    break;
-            }
-
-            const calories = Math.round(bmr * activityMultiplier);
+            const calories = Math.round(bmr * activityMultipliers[activityLevel]);
             const inactiveCalories = Math.round(bmr * 1.2);
             const somewhatActiveCalories = Math.round(bmr * 1.375);
             const activeCalories = Math.round(bmr * 1.55);
