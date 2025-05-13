@@ -1,4 +1,5 @@
 🌱 SmartDiet – Personalized Diet & Fitness App
+
 Welcome to SmartDiet – a smart, intuitive, and user-friendly mobile app built to promote healthier lifestyle choices through personalized diet and fitness recommendations. Whether you're looking to lose weight, gain muscle, or just eat healthier, SmartDiet helps users stay on track with their wellness goals.
 
 📱 App Preview
@@ -70,7 +71,6 @@ git clone https://github.com/sravya2607/smartdiet.git
 # Sync Gradle files and connect your emulator or device
 
 # Run the app
-📌 Ensure Firebase is properly configured with your own credentials in google-services.json.
 
 📌 Future Enhancements
 🧠 AI-powered meal planning
